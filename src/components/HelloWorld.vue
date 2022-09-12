@@ -1,46 +1,139 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
+  <div class="elevator container">
+    <div class="elevator__line" v-for="i in elevatorsArray" :key="i.id">
+      <div class="elevator__cabine" :id="i.id" :ref="i.id"></div>
+    </div>
+    <div class="elevator__line">
+      <div class="btn-container" v-for="i in elevatorsArray.length" :key="i">
+        <button
+          class="btn"
+          v-on:click="moveCab"
+          :id="`${i}floor`"
+          :ref="`${i}floor`"
+        >
+          {{ i }}
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+import ElevatorsAPI from "./ElevatorsAPI";
+
 export default {
-  name: 'HelloWorld',
+  name: "HelloWorld",
   props: {
-    msg: String
-  }
-}
+    msg: String,
+  },
+  data: function () {
+    return {
+      // floors: 9,
+      // elevators: 10,
+      elevatorsArray: ElevatorsAPI.createElevators(9),
+    };
+  },
+  mounted() {
+    // this.createElevators();
+    console.log(this.elevatorsArray);
+  },
+  methods: {
+    createElevators: () => {},
+
+    beaconFloor: function (id) {
+      const $element = this.$refs[`${id}floor`];
+      $element[0].style.backgroundColor = "orange";
+    },
+    getAccessibleElevator: function () {
+      const accessElevator = this.elevatorsArray.filter((item) => {
+        return item.isAvailable === true;
+      });
+      console.log(accessElevator);
+      return accessElevator;
+    },
+    moveCab: function (e) {
+      // console.log(this.$refs);
+      const floorBeacon = +e.target.id[0];
+      this.beaconFloor(floorBeacon);
+
+      const cab = this.getAccessibleElevator();
+      const cabID = cab[0].id;
+      const savePosition = cab[0].position;
+
+      if (cab.length) {
+        const $element = this.$refs[`${cabID}`][0];
+        this.elevatorsArray.map((el) => {
+          if (el.id === cabID) {
+            el.position = floorBeacon;
+            el.isAvailable = false;
+          }
+        });
+
+        let diff = [savePosition, floorBeacon];
+        diff.sort((a, b) => b - a);
+        diff = diff[0] - diff[1];
+        console.log(diff);
+
+        $element.style.transition = `${diff}s`;
+        $element.style.bottom = `${50 * floorBeacon - 50}px`;
+        setTimeout(() => {
+          $element.style.transition = `1s`;
+          $element.style.backgroundColor = "orange";
+          setTimeout(() => {
+            $element.style.backgroundColor = "#42b983";
+            this.elevatorsArray.map((el) => {
+              if (el.id === cabID) {
+                el.isAvailable = true;
+              }
+            });
+          }, 3000);
+        }, diff * 1000);
+        console.log(this.elevatorsArray);
+      }
+    },
+  },
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
+.btn-container {
+  width: 50px;
+  height: 50px;
+  background-color: #1ec479;
+  border: 0;
+  color: aliceblue;
+  font-size: bold;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .btn {
+    background-color: rgb(255, 255, 255);
+    border: 0;
+    cursor: pointer;
+    color: black;
+  }
+}
+.elevator {
+  display: flex;
+  &__line {
+    width: 50px;
+    height: 450px;
+    margin-right: 10px;
+    background-color: rgb(71, 71, 69);
+    position: relative;
+    display: flex;
+    flex-direction: column-reverse;
+  }
+  &__cabine {
+    width: 50px;
+    height: 50px;
+    background-color: #42b983;
+    position: absolute;
+    bottom: 0;
+  }
+}
 h3 {
   margin: 40px 0 0;
 }
