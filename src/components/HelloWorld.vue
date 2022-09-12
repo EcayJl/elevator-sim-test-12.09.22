@@ -48,8 +48,27 @@ export default {
       const accessElevator = this.elevatorsArray.filter((item) => {
         return item.isAvailable === true;
       });
-      console.log(accessElevator);
       return accessElevator;
+    },
+    chosingBest: function (cab, floor) {
+      const result = [];
+
+      cab.map((el) => {
+        result.push({
+          id: el.id,
+          position: el.position,
+          diff: Math.abs(floor - el.position),
+        });
+      });
+
+      const diffArray = result.map((el) => {
+        return el.diff;
+      });
+      diffArray.sort((a, b) => b - a).reverse();
+      const bestCab = result.find((el) => {
+        return el.diff === diffArray[0];
+      });
+      return bestCab;
     },
     moveCab: function (e) {
       // console.log(this.$refs);
@@ -57,8 +76,13 @@ export default {
       this.beaconFloor(floorBeacon);
 
       const cab = this.getAccessibleElevator();
-      const cabID = cab[0].id;
-      const savePosition = cab[0].position;
+      const bestCab = this.chosingBest(cab, floorBeacon);
+
+      // const cabID = cab[0].id;
+      const cabID = bestCab.id;
+
+      const savePosition = bestCab.position;
+      // const savePosition = cab[0].position;
 
       if (cab.length) {
         const $element = this.$refs[`${cabID}`][0];
