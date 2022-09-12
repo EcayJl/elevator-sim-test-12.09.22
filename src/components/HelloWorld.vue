@@ -4,7 +4,7 @@
       <div class="elevator__cabine" :id="i.id" :ref="i.id"></div>
     </div>
     <div class="elevator__line">
-      <div class="btn-container" v-for="i in elevatorsArray.length" :key="i">
+      <div class="btn-container" v-for="i in floors" :key="i">
         <button
           class="btn"
           v-on:click="moveCab"
@@ -14,6 +14,9 @@
           {{ i }}
         </button>
       </div>
+    </div>
+    <div class="elevator__stack">
+      {{ elevatorStack }}
     </div>
   </div>
 </template>
@@ -28,9 +31,10 @@ export default {
   },
   data: function () {
     return {
-      // floors: 9,
+      floors: 9,
       // elevators: 10,
-      elevatorsArray: ElevatorsAPI.createElevators(9),
+      elevatorsArray: ElevatorsAPI.createElevators(2),
+      elevatorStack: [],
     };
   },
   mounted() {
@@ -43,6 +47,10 @@ export default {
     beaconFloor: function (id) {
       const $element = this.$refs[`${id}floor`];
       $element[0].style.backgroundColor = "orange";
+    },
+    hideBeacon: function (id) {
+      const $element = this.$refs[`${id}floor`];
+      $element[0].style.backgroundColor = "aliceblue";
     },
     getAccessibleElevator: function () {
       const accessElevator = this.elevatorsArray.filter((item) => {
@@ -73,13 +81,24 @@ export default {
     moveCab: function (e) {
       // console.log(this.$refs);
       const floorBeacon = +e.target.id[0];
-      this.beaconFloor(floorBeacon);
 
+      if (
+        this.elevatorsArray.find((el) => {
+          return el.position === floorBeacon;
+        })
+      ) {
+        return;
+      }
+      this.beaconFloor(floorBeacon);
       const cab = this.getAccessibleElevator();
       const bestCab = this.chosingBest(cab, floorBeacon);
 
       // const cabID = cab[0].id;
       const cabID = bestCab.id;
+      // this.elevatorStack.push({
+      //   cab: cabID,
+      //   position: bestCab.position,
+      // });
 
       const savePosition = bestCab.position;
       // const savePosition = cab[0].position;
@@ -105,6 +124,7 @@ export default {
           $element.style.backgroundColor = "orange";
           setTimeout(() => {
             $element.style.backgroundColor = "#42b983";
+            this.hideBeacon(floorBeacon);
             this.elevatorsArray.map((el) => {
               if (el.id === cabID) {
                 el.isAvailable = true;
