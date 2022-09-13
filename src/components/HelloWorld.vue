@@ -1,14 +1,19 @@
 <template>
   <div class="elevator container">
-    <div class="elevator__line" v-for="i in elevatorsArray" :key="i.id">
+    <div
+      class="elevator__line"
+      :style="`height: ${shaftLenght}`"
+      v-for="i in elevatorsArray"
+      :key="i.id"
+    >
       <div class="elevator__cabine" :id="i.id" :ref="i.id"></div>
     </div>
-    <div class="elevator__line">
+    <div class="elevator__line" :style="`height: ${shaftLenght}`">
       <div class="btn-container" v-for="i in floors" :key="i">
         <button
           class="btn"
           v-on:click="moveCab"
-          :id="`${i}floor`"
+          :id="`${i}`"
           :ref="`${i}floor`"
         >
           {{ i }}
@@ -31,14 +36,19 @@ export default {
   },
   data: function () {
     return {
-      floors: 9,
+      floors: 10,
       // elevators: 10,
-      elevatorsArray: ElevatorsAPI.createElevators(5),
+      elevatorsArray: ElevatorsAPI.createElevators(3),
       elevatorStack: [],
       allCabBusy: false,
       toExecut: false,
       isAuto: false,
     };
+  },
+  computed: {
+    shaftLenght: function () {
+      return `${this.floors * 50}px`;
+    },
   },
   mounted() {
     // this.createElevators();
@@ -148,7 +158,8 @@ export default {
     },
     moveCab: function (e) {
       // console.log(this.$refs);
-      const floorBeacon = +e.target.id[0];
+      const floorBeacon = +e.target.id;
+      console.log(floorBeacon);
 
       if (
         this.elevatorsArray.find((el) => {
@@ -256,6 +267,7 @@ export default {
 }
 .elevator {
   display: flex;
+  flex-shrink: 0;
   &__line {
     width: 50px;
     height: 450px;
@@ -263,6 +275,7 @@ export default {
     background-color: rgb(71, 71, 69);
     position: relative;
     display: flex;
+    flex-shrink: 0;
     flex-direction: column-reverse;
   }
   &__cabine {
