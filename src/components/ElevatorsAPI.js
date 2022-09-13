@@ -5,10 +5,9 @@ export default class ElevatorsAPI {
       elevatorsArray.push({
         id: i,
         isAvailable: true,
-        onWay: false,
-        isRecreation: false,
-        position: 0,
-        lastPosition: 0
+        position: 1,
+        lastPosition: 0,
+        animationTime: 0
       });
     }
     
