@@ -1,10 +1,8 @@
 #Седелал сам себе челендж - на разработку не более 6 часов.
 настройка колличества лифтов и этажей в data компонента-
 return {
-      floors: 14, <-- этажи
-      elevatorsArray: ElevatorsAPI.createElevators(25), <-- лифты
-      elevatorStack: [],
-      isAuto: false,
+      #floors: 14, <-- этажи
+      #elevatorsArray: ElevatorsAPI.createElevators(25), <-- лифты
 };
 
 лифтов и этажей сколько угодно.
