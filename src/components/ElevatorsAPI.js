@@ -7,7 +7,8 @@ export default class ElevatorsAPI {
         isAvailable: true,
         onWay: false,
         isRecreation: false,
-        position: 0
+        position: 0,
+        lastPosition: 0
       });
     }
     

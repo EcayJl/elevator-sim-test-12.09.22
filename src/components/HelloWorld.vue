@@ -6,7 +6,14 @@
       v-for="i in elevatorsArray"
       :key="i.id"
     >
-      <div class="elevator__cabine" :id="i.id" :ref="i.id"></div>
+      <div class="elevator__cabine" :id="i.id" :ref="i.id">
+        <div>
+          {{ i.isAvailable ? "" : `to: ${i.position}` }}
+          <div v-if="!i.isAvailable">
+            {{ i.lastPosition > i.position ? "down" : "up" }}
+          </div>
+        </div>
+      </div>
     </div>
     <div class="elevator__line" :style="`height: ${shaftLenght}`">
       <div class="btn-container" v-for="i in floors" :key="i">
@@ -19,9 +26,6 @@
           {{ i }}
         </button>
       </div>
-    </div>
-    <div class="elevator__stack">
-      {{ elevatorStack }}
     </div>
   </div>
 </template>
@@ -190,6 +194,7 @@ export default {
         this.elevatorsArray.map((el) => {
           if (el.id === cabID) {
             el.position = floorBeacon;
+            el.lastPosition = savePosition;
             el.isAvailable = false;
           }
         });
