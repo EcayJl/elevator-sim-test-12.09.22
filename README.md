@@ -1,24 +1,14 @@
-# elevator
+#Седелал сам себе челендж - на разработку не более 6 часов.
+настройка колличества лифтов и этажей в data компонента-
+return {
+      floors: 14, <-- этажи
+      elevatorsArray: ElevatorsAPI.createElevators(25), <-- лифты
+      elevatorStack: [],
+      isAuto: false,
+};
 
-## Project setup
-```
-npm install
-```
+лифтов и этажей сколько угодно.
+по своему челенджу не успел реализовать сейв, кидаю как есть.
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+npm i
+npm run start
